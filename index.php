@@ -3,19 +3,21 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 require dirname(__FILE__).'/vendor/autoload.php';
-
-use AJT\Toggl\TogglClient;
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $dotenv->load();
 
 
 
 $toggl_token = $_ENV['TOGGLE_API_KEY'];
-$toggl_client = TogglClient::factory(array('api_key' => $toggl_token));
 
-$workspaces = $toggl_client->getWorkspaces(array());
-
-foreach($workspaces as $workspace){
-    $id = $workspace['id'];
-    print $workspace['name'] . "\n";
-}
+$client = new GuzzleHttp\Client();
+$vUrl = 'https://www.toggl.com/api/v8/workspaces/1043423/tasks';
+$vUrl = 'https://www.toggl.com/api/v8/workspaces';
+$res = $client->get($vUrl, ['auth' => [$toggl_token, 'api_token']]);
+echo $res->getStatusCode();
+// "200"
+echo $res->getHeader('content-type');
+// 'application/json; charset=utf8'
+echo $res->getBody();
+// {"type":"User"...'
+var_export($res->json());
